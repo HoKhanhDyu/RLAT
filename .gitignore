@@ -1,2 +1,7 @@
-.png
-.jpg
+*.png
+*.jpg
+*.jpeg
+*.json
+*.txt
+final
+original
