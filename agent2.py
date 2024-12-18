@@ -154,6 +154,7 @@ class Agent_Attack():
 
     def train(self):
         k = 0
+        total_success = 0
         for img, label in tqdm(self.train_loader):
             print(self.epsilon)
             if label != self.classifier_img(img).argmax():
@@ -200,6 +201,8 @@ class Agent_Attack():
                         json.dump(self.loss_lists, f)
                 self.num += 1
                 if label != prob.argmax():
+                    total_success += 1
+                    print(f"Step {j}: {label} -> {prob.argmax()} with {torch.norm(img - orig_img)}, {total_success}/{k}")
                     self.success_memory.append(Transition(state, torch.tensor([action1]), next_state, torch.tensor([reward]), True))
                     with open(r"logs_succ.txt", "a") as f:
                         f.write(f"{k}: Step {j}: {label} -> {prob.argmax()} with {torch.norm(img - orig_img)}\n")
