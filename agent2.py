@@ -202,7 +202,7 @@ class Agent_Attack():
                 self.num += 1
                 if label != prob.argmax():
                     total_success += 1
-                    print(f"Step {j}: {label} -> {prob.argmax()} with {torch.norm(img - orig_img)}, {total_success}/{k}, {prob[0][label].item()} -> {prob[0][prob.argmax()].item()}")
+                    print(f"Step {j}: {label} -> {prob.argmax()} with {torch.norm(img - orig_img)}, {total_success}/{k}, {orig_prob[0][label].item()} -> {prob[0][label].item()}, {prob.max().item()}")
                     self.success_memory.append(Transition(state, torch.tensor([action1]), next_state, torch.tensor([reward]), True))
                     with open(r"logs_succ.txt", "a") as f:
                         f.write(f"{k}: Step {j}: {label} -> {prob.argmax()} with {torch.norm(img - orig_img)}\n")
