@@ -174,7 +174,7 @@ class Agent_Attack():
                 prob = self.classifier_img(img)
                 action1, action2 = self.select_action(state)
                 self.action_lists.append((action1, action2))
-                img = self.make_action(orig_img, img, action1, action2, 2)
+                img = self.make_action(orig_img, img, action1, action2, 3)
                 # save_img_mnist(img, f"current_img.png", x, y, r)
                 reward = self.reward(img, orig_prob, orig_img, label)
                 self.reward_lists.append(reward.item())

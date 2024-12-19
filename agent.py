@@ -168,7 +168,7 @@ class Agent_Attack():
                 if self.num % 10 == 0:
                     loss = self.optimize_model()
                     self.loss_lists.append(loss)
-                if self.num % 100 == 0:
+                if self.num % 5 == 0:
                     self.epsilon = max(0.1, self.epsilon - 0.0001)
                 if self.num % self.TARGET_UPDATE == 0:
                     self.target_net.load_state_dict(self.policy_net.state_dict())
