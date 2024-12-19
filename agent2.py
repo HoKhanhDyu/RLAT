@@ -124,7 +124,8 @@ class Agent_Attack():
 
     
     def make_action(self, orgi_img, img, grid1, grid2, e):
-        random_grid = torch.rand((2, 2)) * 2 - 1
+        # random_grid = torch.rand((2, 2)) * 2 - 1
+        random_grid = torch.ones((2, 2)) * -1
         mask = img - orgi_img
 
         mask_temp = mask.clone()
