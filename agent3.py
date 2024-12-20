@@ -135,6 +135,12 @@ class Agent_Attack():
         prob = self.classifier(img).cpu()
         img = img.cpu()
         return prob
+    
+    def scale_mask(self, mask):
+        scale_mask = mask.clone()
+        for i in range(self.batch_size_att):
+            scale_mask[i] = mask[i] / (torch.norm(mask[i]) + 1e-8)
+        return scale_mask
 
     def train(self):
         k = 0
@@ -162,9 +168,8 @@ class Agent_Attack():
                         continue
                     new_img[i], masks[i] = self.make_action(img[i], masks[i], actions[i], 2)
                 prob = self.classifier_img(new_img)
-                mask_nomalize = batch_norm(masks)
+                mask_nomalize = self.scale_mask(masks)
                 next_state = torch.cat([img, mask_nomalize], dim=1)
-                # print(torch.norm(masks))
                 for i in range(self.batch_size_att):
                     if dones[i]:
                         continue
