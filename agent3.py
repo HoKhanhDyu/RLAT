@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from utils import save_img_mnist
 
 class Agent_Attack():
-    def __init__(self, load=False, device="cpu", batch_size_att=64, batch_size=2048):
+    def __init__(self, load=False, device="cpu", batch_size_att=256, batch_size=2048):
         torch.cuda.current_device()
         self.batch_size_att = batch_size_att
         self.batch_size = batch_size
@@ -121,7 +121,7 @@ class Agent_Attack():
     
     def make_action(self, orgi_img, mask, grid, e):
 
-        mask[0][grid//self.grid_map:grid//self.grid_map+self.grid_size, grid%self.grid_map:grid%self.grid_map+self.grid_size] -= 1
+        mask[0][grid//self.grid_map*self.grid_size:grid//self.grid_map*self.grid_size+self.grid_size, grid%self.grid_map*self.grid_size:grid%self.grid_map*self.grid_size+self.grid_size] += 1
                 
         mask_fit = mask / torch.norm(mask) * e
 
@@ -149,6 +149,7 @@ class Agent_Attack():
             for i in range(self.batch_size_att):
                 if label[i] != orig_prob[i].argmax():
                     dones[i] = True
+                continue
                 save_image(img[i], f"original/{k}_{i}.png")
             # orig_img = img.clone()
             state = torch.cat([img, masks], dim=1)
@@ -159,7 +160,7 @@ class Agent_Attack():
                 for i in range(self.batch_size_att):
                     if dones[i]:
                         continue
-                    new_img[i], masks[i] = self.make_action(img[i], masks[i], actions[i], 3)
+                    new_img[i], masks[i] = self.make_action(img[i], masks[i], actions[i], 2)
                 prob = self.classifier_img(new_img)
                 mask_nomalize = batch_norm(masks)
                 next_state = torch.cat([img, mask_nomalize], dim=1)
@@ -197,8 +198,12 @@ class Agent_Attack():
                         json.dump(self.loss_lists, f)
                 self.num += 1
                 state = next_state
+
+            print(f"Success: {sum(dones)}/{self.batch_size_att}")
+            
             with open(r"logs.txt", "a") as f:
                 for i in range(self.batch_size_att):
+                    continue
                     save_image(new_img[i], f"final/{k}_{i}.png")
                     f.write(f"{k}_{i}: {label[i]} -> {prob[i].argmax()} with {torch.norm(new_img[i] - img[i])}, prob_label: {orig_prob[i][label[i]].item()} -> {prob[i][label[i]].item()}, prob_max: {prob[i].max().item()}\n")
             # with open(r"logs.txt", "a") as f:
