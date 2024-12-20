@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from utils import save_img_mnist
 
 class Agent_Attack():
-    def __init__(self, load=False, device="cpu", batch_size_att=256, batch_size=2048):
+    def __init__(self, load=False, device="cpu", batch_size_att=256, batch_size=4096):
         torch.cuda.current_device()
         self.batch_size_att = batch_size_att
         self.batch_size = batch_size
@@ -36,8 +36,8 @@ class Agent_Attack():
         
         self.policy_net =  DQN_Conv(self.input_size, self.output_size).cuda().train()
         
-        self.memory = deque(maxlen=300000)
-        self.success_memory = deque(maxlen=300)
+        self.memory = deque(maxlen=10000000)
+        self.success_memory = deque(maxlen=10000)
         self.criterion = nn.MSELoss().cuda()
         self.TARGET_UPDATE =TARGET_UPDATE
         self.GAMMA = GAMMA
