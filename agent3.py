@@ -55,7 +55,7 @@ class Agent_Attack():
         train_dataset = get_dataset('mnist', split='train')
         self.train_dataset = train_dataset
         test_dataset = get_dataset('mnist', split='test')
-        self.train_loader = DataLoader(train_dataset, batch_size=self.batch_size_att, shuffle=True)
+        self.train_loader = DataLoader(train_dataset, batch_size=self.batch_size_att, shuffle=False)
         self.test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
         self.action_lists = []
         self.reward_lists = []
@@ -179,7 +179,9 @@ class Agent_Attack():
                         with open(r"logs_success.txt", "a") as f:
                             f.write(f"{k}_{i}: {label[i]} -> {prob[i].argmax()} with {torch.norm(new_img[i] -img[i])}, prob_label: {orig_prob[i][label[i]].item()} -> {prob[i][label[i]].item()}, prob_max: {prob[i].max().item()}\n")
                     else:
-                        self.memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([0]), False))
+                        if random.random() < 0.15:
+                            self.memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([0]), False))
+                        # self.memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([0]), False))
                 if all(dones):
                     break
                 
