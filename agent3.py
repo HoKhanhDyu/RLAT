@@ -82,8 +82,8 @@ class Agent_Attack():
             return actions
         
     def optimize_model(self):
-        success_batch_size = min(len(self.success_memory), int(0.05 * BATCH_SIZE))
-        normal_batch_size = BATCH_SIZE - success_batch_size
+        success_batch_size = min(len(self.success_memory), int(0.05 * self.batch_size))
+        normal_batch_size = self.batch_size - success_batch_size
         # normal_batch_size = BATCH_SIZE
         if len(self.memory) < normal_batch_size:
             return
