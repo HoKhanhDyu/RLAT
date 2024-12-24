@@ -36,7 +36,7 @@ class Agent_Attack():
         
         self.policy_net =  DQN_Conv(self.input_size, self.output_size).cuda().train()
         
-        self.memory = deque(maxlen=500000)
+        self.memory = deque(maxlen=100000)
         self.success_memory = deque(maxlen=500)
         self.criterion = nn.MSELoss().cuda()
         self.TARGET_UPDATE =TARGET_UPDATE
@@ -148,6 +148,7 @@ class Agent_Attack():
         total_success = 0
         for img, label in tqdm(self.train_loader):
             k += 1
+            print(len(self.memory))
             print(self.epsilon)
             orig_prob = self.classifier_img(img)
             masks = torch.zeros(self.batch_size_att, 1, self.img_size, self.img_size)
