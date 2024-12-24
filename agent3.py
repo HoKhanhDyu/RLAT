@@ -36,7 +36,7 @@ class Agent_Attack():
         
         self.policy_net =  DQN_Conv(self.input_size, self.output_size).cuda().train()
         
-        self.memory = deque(maxlen=200000)
+        self.memory = deque(maxlen=150000)
         self.success_memory = deque(maxlen=5000)
         self.criterion = nn.MSELoss().cuda()
         self.TARGET_UPDATE =TARGET_UPDATE
@@ -72,7 +72,7 @@ class Agent_Attack():
     #     return torch.tensor(0).float()
     
     def select_action(self, state):
-        if random.random() < 2:
+        if random.random() < self.epsilon:
             actions = torch.randint(0, self.output_size, (self.batch_size_att, 1))
             return actions
         with torch.no_grad():
@@ -192,7 +192,6 @@ class Agent_Attack():
                             self.success_memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([-2]), True))
 
                 if self.num % 1 == 0:
-                    continue
                     loss = self.optimize_model()
                     self.loss_lists.append(loss)
                 if self.num % 50 == 0:
