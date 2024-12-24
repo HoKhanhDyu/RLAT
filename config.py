@@ -13,7 +13,7 @@ IMG_SIZE = 28 # areas: img_size ^ 2
 MAX_ITER = 300
 NOISE_SD = 0.005
 GAMMA = 0.98
-TARGET_UPDATE = 200
+TARGET_UPDATE = 100
 NUM_TESTS = 100
 
 transform = transforms.Compose([

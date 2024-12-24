@@ -146,7 +146,10 @@ class Agent_Attack():
         k = 0
         batch_norm = nn.BatchNorm2d(1)
         total_success = 0
+        his = []
         for img, label in tqdm(self.train_loader):
+            if len(label) != self.batch_size_att:
+                continue
             k += 1
             print(len(self.memory))
             print(self.epsilon)
@@ -208,6 +211,11 @@ class Agent_Attack():
                 state = next_state
 
             print(f"Success: {sum(dones)}/{self.batch_size_att}")
+            his.append({
+                "success": sum(dones),
+                "total": self.batch_size_att,
+                'espilon': self.epsilon
+            })
             
             with open(r"logs.txt", "a") as f:
                 for i in range(self.batch_size_att):
@@ -224,6 +232,8 @@ class Agent_Attack():
         #     json.dump(self.reward_lists, f)
         with open(r"losses.json", "w") as f:
             json.dump(self.loss_lists, f)
+        with open(r"his.json", "w") as f:
+            json.dump(his, f)
 
 if __name__ == "__main__":
 
