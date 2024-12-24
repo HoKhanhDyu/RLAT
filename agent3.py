@@ -72,7 +72,7 @@ class Agent_Attack():
     #     return torch.tensor(0).float()
     
     def select_action(self, state):
-        if random.random() < self.epsilon:
+        if random.random() < 2:
             actions = torch.randint(0, self.output_size, (self.batch_size_att, 1))
             return actions
         with torch.no_grad():
