@@ -36,8 +36,8 @@ class Agent_Attack():
         
         self.policy_net =  DQN_Conv(self.input_size, self.output_size).cuda().train()
         
-        self.memory = deque(maxlen=100000)
-        self.success_memory = deque(maxlen=500)
+        self.memory = deque(maxlen=200000)
+        self.success_memory = deque(maxlen=5000)
         self.criterion = nn.MSELoss().cuda()
         self.TARGET_UPDATE =TARGET_UPDATE
         self.GAMMA = GAMMA
@@ -180,7 +180,7 @@ class Agent_Attack():
                         with open(r"logs_success.txt", "a") as f:
                             f.write(f"{k}_{i}: {label[i]} -> {prob[i].argmax()} with {torch.norm(new_img[i] -img[i])}, prob_label: {orig_prob[i][label[i]].item()} -> {prob[i][label[i]].item()}, prob_max: {prob[i].max().item()}\n")
                     else:
-                        if random.random() < 0.15:
+                        if random.random() < 0.1:
                             self.memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([0]), False))
                         # self.memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([0]), False))
                 if all(dones):
@@ -191,7 +191,7 @@ class Agent_Attack():
                         if not dones[i]:
                             self.success_memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([-2]), True))
 
-                if self.num % 3 == 0:
+                if self.num % 1 == 0:
                     loss = self.optimize_model()
                     self.loss_lists.append(loss)
                 if self.num % 50 == 0:
