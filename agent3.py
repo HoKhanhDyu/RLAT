@@ -192,6 +192,7 @@ class Agent_Attack():
                             self.success_memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([-2]), True))
 
                 if self.num % 1 == 0:
+                    continue
                     loss = self.optimize_model()
                     self.loss_lists.append(loss)
                 if self.num % 50 == 0:
