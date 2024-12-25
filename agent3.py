@@ -21,8 +21,8 @@ class Agent_Attack():
         self.EPS = EPS
         self.epsilon = EPSILON
         self.device = device
-        classifier = MNIST_CC().eval()
-        classifier.load_state_dict(torch.load(r"trained_model/mnist_cc.pth"))
+        classifier = CONV_MNIST().eval()
+        classifier.load_state_dict(torch.load(r"trained_model/mnist_cnn_best.pth"))
         self.classifier = classifier.cuda()
 
         self.img_size = IMG_SIZE

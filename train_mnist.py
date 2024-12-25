@@ -45,8 +45,34 @@ class MNIST_CC(nn.Module):
         out = self.classifier(x)
         out = F.softmax(out, dim=1)
         return out
+    
+class CONV_MNIST(nn.Module):
+    def __init__(self):
+        super(CONV_MNIST, self).__init__()
+        self.classifier = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Dropout(0.25),
+            nn.Flatten(),
+            nn.Linear(12*12*64, 128),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(128, 10)
+        )
+    def forward(self, x):
+        out = self.classifier(x)
+        # out = F.softmax(out, dim=1)
+        return out
 
-model = MNIST_CC()
+# model = MNIST_CC()
+# model.to(device)
+# criterion = nn.CrossEntropyLoss()
+# optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+model = CONV_MNIST()
 model.to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -67,6 +93,7 @@ def accuracy(loader, model):
     return num_correct/num_samples
 
 num_epochs = 10
+best_accuracy = 0
 for epoch in range(num_epochs):
     for images, labels in tqdm(train_loader):
         images = images.to(device)
@@ -78,8 +105,13 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
-    print(f'Train Accuracy: {accuracy(train_loader, model):.4f}, Test Accuracy: {accuracy(test_loader, model):.4f}')
+    test_accuracy = accuracy(test_loader, model)
+    print(f'Train Accuracy: {accuracy(train_loader, model):.4f}, Test Accuracy: {test_accuracy:.4f}')
+    if test_accuracy > best_accuracy:
+        best_accuracy = test_accuracy
+        torch.save(model.state_dict(), 'trained_model/mnist_cnn_best.pth')
 
-torch.save(model.state_dict(), 'trained_model/mnist_cc.pth')
+
+torch.save(model.state_dict(), 'trained_model/mnist_cnn.pth')
 
 print("Training completed.")
