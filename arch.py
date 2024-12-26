@@ -115,17 +115,17 @@ class DQN_Conv(nn.Module):
         super(DQN_Conv, self).__init__()
         self.classifier = nn.Sequential(
             nn.Conv2d(in_channels=2, out_channels=32, kernel_size=3, stride=1),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.MaxPool2d(kernel_size=2),
             nn.Dropout(0.25),
             nn.Flatten(),
             nn.Linear( in_features= 9216, out_features=1024),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Dropout(0.5),
             nn.Linear( in_features= 1024, out_features= 128),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Dropout(0.5),
             nn.Linear( in_features= 128, out_features= output_size)
         )
