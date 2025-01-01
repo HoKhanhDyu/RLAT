@@ -208,7 +208,7 @@ class Agent_Attack():
                         if not dones[i]:
                             self.success_memory.append(Transition(state[i], torch.tensor([actions[i]]), next_state[i], torch.tensor([-2]), True))
 
-                if self.num % 1 == 0:
+                if self.num % 3 == 0:
                     loss = self.optimize_model()
                     self.loss_lists.append(loss)
                 if self.num % 25 == 0:
