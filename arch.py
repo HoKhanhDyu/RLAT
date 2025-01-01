@@ -131,5 +131,40 @@ class DQN_Conv(nn.Module):
         )
     def forward(self, x):
         return self.classifier(x)
+    
+class DQN_CNN2(nn.Module):
+    def __init__(self, input_size: int, output_size: int):
+        super(DQN_CNN2, self).__init__()
+        self.classifier = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1),
+            nn.Tanh(),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1),
+            nn.Tanh(),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Dropout(0.25),
+            nn.Flatten(),
+            nn.Linear( in_features= 9216, out_features=1024),
+            nn.Tanh(),
+            nn.Dropout(0.5),
+            nn.Linear( in_features= 1024, out_features= 512),
+            nn.Tanh()
+        )
+        self.fc1 = nn.Linear(512 + output_size, 512)
+        self.fc2 = nn.Linear(512, output_size)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.2)
+    def forward(self, inputs):
+        images = inputs[:, :28*28]
+        images = images.view(-1, 1, 28, 28)
+        features = self.classifier(images)
+        features = torch.cat((features, inputs[:, 28*28:]), dim=1)
+        features = self.fc1(features)
+        features = self.relu(features)
+        features = self.dropout(features)
+        features = self.fc2(features)
+        return features
+
+
+        
 
 

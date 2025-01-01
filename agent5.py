@@ -34,7 +34,7 @@ class Agent_Attack():
         self.input_size = self.img_size * self.img_size * 2
         self.output_size = self.grid_map * self.grid_map
         
-        self.policy_net =  DQN_Conv(self.input_size, self.output_size).cuda().train()
+        self.policy_net =  DQN_CNN2(self.input_size, self.output_size).cuda().train()
         
         self.memory = deque(maxlen=150000)
         self.success_memory = deque(maxlen=5000)
@@ -48,7 +48,7 @@ class Agent_Attack():
             print("Loading Trained model")
             self.policy_net.load_state_dict(torch.load(r"/kaggle/input/model-trien-vong-2/model_0_trrenvong_2.pth"))
 
-        self.target_net = DQN_Conv(self.input_size, self.output_size).cuda()
+        self.target_net = DQN_CNN2(self.input_size, self.output_size).cuda()
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
         self.optimizer = optim.Adam(self.policy_net.parameters(),lr=5e-6)
@@ -175,8 +175,8 @@ class Agent_Attack():
                 continue
                 save_image(img[i], f"original/{k}_{i}.png")
             # orig_img = img.clone()
-            list_mask = self.create_list_mask(masks)
-            state = torch.cat([img, list_mask], dim=1)
+            # list_mask = self.create_list_mask(masks)
+            state = torch.cat([img.view(self.batch_size_att, -1), masks], dim=1)
             new_img = img.clone()
             for j in range(self.max_iter):
                 actions = self.select_action(state)
@@ -186,8 +186,8 @@ class Agent_Attack():
                         continue
                     new_img[i], masks[i] = self.make_action(img[i], masks[i], actions[i], 0.1)
                 prob = self.classifier_img(new_img)
-                list_mask = self.create_list_mask(masks)
-                next_state = torch.cat([img, list_mask], dim=1)
+                # list_mask = self.create_list_mask(masks)
+                next_state = torch.cat([img.view(self.batch_size_att, -1), masks], dim=1)
                 for i in range(self.batch_size_att):
                     if dones[i]:
                         continue
