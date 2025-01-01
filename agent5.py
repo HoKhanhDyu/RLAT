@@ -36,7 +36,7 @@ class Agent_Attack():
         
         self.policy_net =  DQN_CNN2(self.input_size, self.output_size).cuda().train()
         
-        self.memory = deque(maxlen=150000)
+        self.memory = deque(maxlen=550000)
         self.success_memory = deque(maxlen=5000)
         self.criterion = nn.MSELoss().cuda()
         self.TARGET_UPDATE =TARGET_UPDATE
